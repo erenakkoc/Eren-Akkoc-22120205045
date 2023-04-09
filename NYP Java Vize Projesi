@@ -1,0 +1,255 @@
+//Eren Akkoç 22120205045 NYP Java Vize Projesi
+//Mainde classi icin kullanılan kutuphaneler
+import javax.mail.MessagingException;
+import java.io.IOException;
+import java.util.Scanner;
+// UyeEkleme classi icin kullanilan kutuphaneler
+import java.io.*;
+//MailGonder classi icin kullanılan kutuphaneler
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+public class Main {
+    public static void main(String[] args) throws IOException, MessagingException {
+        Scanner scan=new Scanner(System.in);
+        UyeEkleme ekle=new UyeEkleme();
+        MailGonder mail=new MailGonder();
+        // Ana menü döngüsü
+        while(true){
+            System.out.println("Lutfen Yapmak İstediginiz Islemi Seciniz");
+            System.out.println("1-Elit Uye Ekleme \n2-Genel Uye Ekleme \n3-Mail Gonderme");
+            int islem=scan.nextInt();
+            switch(islem){
+                //Elit uye ekleme islemi
+                case 1:
+                    //isim,soyisim ve email degiskenlerini kullanicidan alarak ElitUyeKayit fonksiyonuna gonderiyoruz
+                    System.out.println("*****Elit Uye Ekleme*****");
+                    System.out.printf("Ad:");
+                    scan.nextLine();
+                    String isim=scan.nextLine();
+                    System.out.printf("Soyad:");
+                    String soyisim=scan.nextLine();
+                    System.out.printf("Email:");
+                    String email=scan.nextLine();
+                    ekle.ElitUyeKayit(isim,soyisim,email);
+                    ekle.UyeleriDosyayaKaydet();//UyeleriDosyayaKaydet fonksiyonunu cagirip metin belgesine yazdiriyoruz
+                    System.out.println("Elit Uye Kaydedilmistir");
+                    break;
+                // Genel uye ekleme islemi
+                case 2:
+                    //isim,soyisim ve email degiskenlerini kullanicidan alarak GenelUyeKayit fonksiyonuna gonderiyoruz
+                    System.out.println("*****Genel Uye Ekleme*****");
+                    System.out.print("Ad:");
+                    scan.nextLine();
+                    String isim1=scan.nextLine();
+                    System.out.print("Soyad:");
+                    String soyisim1=scan.nextLine();
+                    System.out.print("Email:");
+                    String email1=scan.nextLine();
+                    ekle.GenelUyeKayit(isim1,soyisim1,email1);
+                    ekle.UyeleriDosyayaKaydet();//UyeleriDosyayaKaydet fonksiyonunu cagirip metin belgesine yazdiriyoruz
+                    System.out.println("Genel Uye Kaydedilmistir");
+                    break;
+                //Mail gonderme islemi
+                case 3:
+                    System.out.println("1-Elit Uyelere Mail \n2-Genel Uyelere Mail \n3-Tum Uyelere Mail");
+                    int islem2=scan.nextInt();
+                    switch(islem2){
+                        //Elit uyelere mail gonderme islemi
+                        case 1:
+                            //if else kullanarak eğer elit uye yok ise ekrana yazdiriyoruz
+                            if(ekle.sayacelit==0){
+                                System.out.println("Elit Uye Bulunmamaktadir ");
+                                break;
+                            }
+                            else{
+                            ekle.DosyaOkuma();//Kullanıcılar.txt adli dosyayi okuyarak ekrana yazdırır
+                            /*Atacagimiz mailin basligini ve mesajini kullanicidan alip sayacgenel sayesinde elit kullanici
+                            sayisi kadar genel kullanicilara mail gonderiyoruz
+                             */
+                            System.out.println("\n"+"Mail Basligi");
+                            scan.nextLine();
+                            String baslik=scan.nextLine();
+                            System.out.println("Mail Mesajı");
+                            String mesaj=scan.nextLine();
+                            System.out.println("Elit Uyelere Mail Gönderiliyor...");
+                            for(int i=0;i<ekle.sayacelit;i++){
+                                mail.gonder("testgonderenmail@gmail.com","testgonderensifre",ekle.ElitUyelerEmail[i],baslik,mesaj);
+                            }
+                            System.out.println("\n"+"*******************************************");
+                            System.out.println("Elit Uyelere Mail Basariyla Gonderildi...");
+                            System.out.println("*******************************************"+"\n");
+                            break;
+                            }
+                        //Genel uyelere mail gonderme islemi
+                        case 2:
+                            //if else kullanarak eğer genel uye yok ise ekrana yazdiriyoruz
+                            if(ekle.sayacgenel==0){
+                                System.out.println("Genel Uye Bulunmamaktadir ");
+                                break;
+                            }
+                            else{
+                            ekle.DosyaOkuma();//Kullanıcılar.txt adli dosyayi okuyarak ekrana yazdırır
+                            /*Atacagimiz mailin basligini ve mesajini kullanicidan alip sayacgenel sayesinde genel kullanici
+                            sayisi kadar genel kullanicilara mail gonderiyoruz
+                             */
+                            System.out.println("\n"+"Mail Basligi");
+                            scan.nextLine();
+                            String baslik1=scan.nextLine();
+                            System.out.println("Mail Mesajı");
+                            String mesaj1=scan.nextLine();
+                            System.out.println("Genel Uyelere Mail Gönderiliyor...");
+                            for(int i=0;i<ekle.sayacgenel;i++){
+                                mail.gonder("testgonderenmail@gmail.com","testgonderensifre",ekle.GenelUyelerEmail[i],baslik1,mesaj1);
+                            }
+                            System.out.println("\n"+"*******************************************");
+                            System.out.println("Genel Uyelere Mail Basariyla Gonderildi...");
+                            System.out.println("*******************************************"+"\n");
+                            break;
+                            }
+                        //Tum uyelere mail gonderme islemi
+                        case 3:
+                            //if else kullanarak eğer elit veya genel uye yok ise ekrana yazdiriyoruz
+                            if(ekle.sayacelit==0 && ekle.sayacgenel==0){
+                                System.out.println("Uye Bulunmamaktadir ");
+                                break;
+                            }
+                            else{
+                            ekle.DosyaOkuma();//Kullanıcılar.txt adli dosyayi okuyarak ekrana yazdırır
+                            /*Atacagimiz mailin basligini ve mesajini kullanicidan alip sayacgenel sayesinde elit ve genel
+                            kullanicisayisi kadar genel kullanicilara mail gonderiyoruz
+                            */
+                            System.out.println("\n"+"Mail Basligi");
+                            scan.nextLine();
+                            String baslik2=scan.nextLine();
+                            System.out.println("Mail Mesajı");
+                            String mesaj2=scan.nextLine();
+                            System.out.println("Tüm Uyelere Mail Gönderiliyor...");
+                            for(int i=0;i<ekle.sayacelit;i++){
+                                mail.gonder("testgonderenmail@gmail.com","testgonderensifre",ekle.ElitUyelerEmail[i],baslik2,mesaj2);
+                            }
+                            for(int i=0;i<ekle.sayacgenel;i++){
+                                mail.gonder("testgonderenmail@gmail.com","testgonderensifre",ekle.GenelUyelerEmail[i],baslik2,mesaj2);
+                            }
+                            System.out.println("\n"+"*******************************************");
+                            System.out.println("Tum Uyelere Mail Basariyla Gonderildi...");
+                            System.out.println("*******************************************"+"\n");
+                            break;
+                            }
+
+                    }
+                    break;
+            }
+
+        }
+        }
+}
+
+
+class UyeEkleme {
+    private String İsim;
+    private String Soyisim;
+    private String email;
+    String ElitUyelerİsim[] = new String[1000];// Elit üyelerin isimlerini tutmak için dizi
+    String ElitUyelerSoyisim[] = new String[1000]; // Elit üyelerin soyisimlerini tutmak için dizi
+    String ElitUyelerEmail[] = new String[1000]; // Elit üyelerin maillerini tutmak için dizi
+    String GenelUyelerİsim[] = new String[1000];// Genel üyelerin isimlerini tutmak için dizi
+    String GenelUyelerSoyisim[] = new String[1000];// Genel üyelerin soyisimlerini tutmak için dizi
+    String GenelUyelerEmail[] = new String[1000];// Genel üyelerin maillerini tutmak için dizi
+    File dosya = new File("Kullanıcılar");//Kullanıcı bilgilerini kaydetmek icin dosya olusturuyoruz
+    int sayacelit = 0;//Kac tane elit kullanıcı girildigini belirlemek icin sayac olusturuyoruz
+    int sayacgenel = 0;//Kac tane genel kullanıcı girildigini belirlemek icin sayac olusturuyoruz
+
+    //Elit uyeleri İsim Soyisim ve email parametlereini dışarıdan alarak oluşturduğumuz dizilere kaydediyoruz
+    public void ElitUyeKayit(String İsim, String Soyisim, String email) {
+        ElitUyelerİsim[sayacelit] = İsim;
+        ElitUyelerSoyisim[sayacelit] = Soyisim;
+        ElitUyelerEmail[sayacelit] = email;
+        sayacelit++;
+    }
+
+    //Genel uyeleri İsim Soyisim ve email parametlereini dışarıdan alarak oluşturduğumuz dizilere kaydediyoruz
+    public void GenelUyeKayit(String İsim, String Soyisim, String email) {
+        GenelUyelerİsim[sayacgenel] = İsim;
+        GenelUyelerSoyisim[sayacgenel] = Soyisim;
+        GenelUyelerEmail[sayacgenel] = (email);
+        sayacgenel++;
+    }
+
+    //Elit ve Genel uyeleri "Kullanıcılar" adli metin belgesine yazdiriyoruz
+    public void UyeleriDosyayaKaydet() throws IOException {
+        FileWriter fyazici = new FileWriter(dosya, false);//
+        BufferedWriter byazici = new BufferedWriter(fyazici);
+        if (!dosya.exists()) {
+            dosya.createNewFile();
+        }
+        byazici.write("*****Elit Uyeler*****");
+        byazici.newLine();
+        for (int a = 0; a < sayacelit; a++)//sayacelit sayesinde kaydedilen elit kullanici kadar for dongusu dondurup elit uyelereri metin belgesinde yazdiriyoruz
+        {
+            byazici.write(ElitUyelerİsim[a] + "    " + ElitUyelerSoyisim[a] + "    " + ElitUyelerEmail[a]);
+            byazici.newLine();
+        }
+        byazici.newLine();
+        byazici.write("*****Genel Uyeler*****");
+        byazici.newLine();
+        for (int a = 0; a < sayacgenel; a++)//sayacgenel sayesinde kaydedilen elit kullanici kadar for dongusu dondurup elit uyelereri metin belgesinde yazdiriyoruz
+        {
+            byazici.write(GenelUyelerİsim[a] + "    " + GenelUyelerSoyisim[a] + "    " + GenelUyelerEmail[a]);
+            byazici.newLine();
+        }
+        byazici.close();
+    }
+
+    public void DosyaOkuma() throws IOException {
+        //Dosyayi acip okuma islemini yapiyoruz
+        FileReader fileReader = new FileReader(dosya);
+        String line;
+
+        BufferedReader reader = new BufferedReader(fileReader);
+
+        while ((line = reader.readLine()) != null) {
+
+            System.out.println(line);
+
+        }
+        reader.close();
+    }
+
+
+}
+
+
+
+class MailGonder{
+    public static void gonder(String gonderen, String sifre, String alici, String baslik, String mesaj) throws MessagingException {
+        String host = "smtp.gmail.com";
+        // Mail göndermek için gerekli olan özellikleri tanımlıyoruz.
+        Properties props = System.getProperties();
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.user", gonderen);
+        props.put("mail.smtp.password", sifre);
+        props.put("mail.smtp.port", "587"); // Gmail SMTP sunucusu için port numarasını giriyoruz
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.ssl.protocols", "TLSv1.2"); // SSL protokolü için kullanılacak protokol sürümü
+
+        // Mail oturumunu başlatıyoruz
+        Session session = Session.getDefaultInstance(props);
+        MimeMessage message = new MimeMessage(session);
+
+
+        // Mailin basligini ve icerigini belirliyoruz
+        message.setFrom(new InternetAddress(gonderen));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(alici));
+        message.setSubject(baslik);
+        message.setText(mesaj);
+
+        // Transport sınıfı kullanarak mail gönderimi yapıyoruz
+        Transport transport = session.getTransport("smtp");
+        transport.connect(host, gonderen, sifre);
+        transport.sendMessage(message, message.getAllRecipients());
+        transport.close();
+    }
+
+}
